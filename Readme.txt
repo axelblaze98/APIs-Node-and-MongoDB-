@@ -1,6 +1,6 @@
 Clone the repository to your system.
 
-Install all the dependencies required using npm install --
+Install all the dependencies required using command: npm install 
 
 create a .env file and provide:
 PORT=your desired portnumber
