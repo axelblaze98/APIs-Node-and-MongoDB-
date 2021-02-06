@@ -14,28 +14,44 @@ addRequestData=(req,res)=>{
     var currentDate = getCurrentISTDate();
     var waitTime = randomNumber(15000,30000);
 
-    apiData = new Api({
+    requestData = new Api({
         date:currentDate,
         method:req.method,
         headers:req.headers,
-        path:'/process/'+req.params[0],
+        path:'/process'+req.params[0],
         query:req.query,
         body:req.body,
-        duration:waitTime
+        duration:waitTime/1000
     });
 
 
-    apiData.save().then(data=>{
+    requestData.save().then(data=>{
         setTimeout(()=>{
             res.status(200).send(data);
         },waitTime)
         
     }).catch(err=>{
         console.log(err.message)
-        res.status(404).send(err.message || 'Something went wrong in adding api data');
+        res.status(404).send(err.message || 'Something went wrong in adding request data');
+    })
+}
+
+getRequestData = (req,res) =>{
+    Api.aggregate(
+        [ 
+            {$match:{}}, 
+            { $group:{ _id:"$method" ,total:{$sum:1},averageDuration:{$avg:"$duration"}} } 
+        ]
+    ).
+    then(data=>{
+        res.status(200).send(data);
+    }).
+    catch(err=>{
+        res.status(400).send(err.message || 'Something went wrong in getiing request data');
     })
 }
 
 module.exports = {
-    addRequestData
+    addRequestData,
+    getRequestData
 }

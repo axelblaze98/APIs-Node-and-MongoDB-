@@ -7,7 +7,7 @@ const disconnect = chalk.bold.red;
 const error = chalk.bold.yellow;
 
 module.exports = function(){
-    mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true },{ useNewUrlParser: true });
+    mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true , useNewUrlParser: true });
 
     mongoose.connection.on('connected', function(){
         console.log(connected("Mongoose default connection is open to ", process.env.DB_URL));

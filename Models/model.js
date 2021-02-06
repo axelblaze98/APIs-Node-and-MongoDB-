@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var apiSchema = new Schema({
+var requestSchema = new Schema({
     date:{
         type: String,
         required :true
@@ -33,4 +33,4 @@ var apiSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('api',apiSchema);
+module.exports = mongoose.model('request',requestSchema);
