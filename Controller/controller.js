@@ -53,17 +53,16 @@ getRequestData = (req,res) =>{
 }
 
 getSpecificRequestInfo = (req,res) =>{
-    toDate=new Date(req.query.toDate);
-    fromDate = new Date(req.query.fromDate);
-    console.log(toDate);
-    console.log(fromDate);
+    tzoffset = (new Date()).getTimezoneOffset() * 60000;
+    toDate=new Date(new Date(req.query.toDate) - tzoffset);
+    fromDate=new Date(new Date(req.query.fromDate) - tzoffset);
     Api.aggregate(
         [ 
             {$match:{
                 method:req.params.requestType.toUpperCase(),
                 date:{
-                    $gte:toDate,
-                    $lt:fromDate,
+                    $gte:fromDate,
+                    $lt:toDate,
                 }
             }}, 
             {$group:{ _id:"$method" ,total:{$sum:1},averageDuration:{$avg:"$duration"}} } 
