@@ -7,7 +7,7 @@ randomNumber=(max,min)=>{
 }
 getCurrentISTDate=()=>{
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    return (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+    return (new Date(Date.now() - tzoffset));
 }
 
 addRequestData=(req,res)=>{
@@ -39,19 +39,46 @@ addRequestData=(req,res)=>{
 getRequestData = (req,res) =>{
     Api.aggregate(
         [ 
-            {$match:{}}, 
-            { $group:{ _id:"$method" ,total:{$sum:1},averageDuration:{$avg:"$duration"}} } 
+            {$match:{
+            }}, 
+            {$group:{ _id:"$method" ,total:{$sum:1},averageDuration:{$avg:"$duration"}} } 
         ]
     ).
     then(data=>{
         res.status(200).send(data);
     }).
     catch(err=>{
-        res.status(400).send(err.message || 'Something went wrong in getiing request data');
+        res.status(400).send(err.message || 'Something went wrong in getting request data');
+    })
+}
+
+getSpecificRequestInfo = (req,res) =>{
+    toDate=new Date(req.query.toDate);
+    fromDate = new Date(req.query.fromDate);
+    console.log(toDate);
+    console.log(fromDate);
+    Api.aggregate(
+        [ 
+            {$match:{
+                method:req.params.requestType.toUpperCase(),
+                date:{
+                    $gte:toDate,
+                    $lt:fromDate,
+                }
+            }}, 
+            {$group:{ _id:"$method" ,total:{$sum:1},averageDuration:{$avg:"$duration"}} } 
+        ]
+    ).
+    then(data=>{
+        res.status(200).send(data);
+    }).
+    catch(err=>{
+        res.status(400).send(err.message || 'Something went wrong in getting request data');
     })
 }
 
 module.exports = {
     addRequestData,
-    getRequestData
+    getRequestData,
+    getSpecificRequestInfo
 }

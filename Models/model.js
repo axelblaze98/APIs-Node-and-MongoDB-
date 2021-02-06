@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 var requestSchema = new Schema({
     date:{
-        type: String,
+        type: Date,
         required :true
     },
     method:{
